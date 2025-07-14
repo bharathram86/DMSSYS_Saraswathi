@@ -1,0 +1,219 @@
+Lesson1:
+1) what is Data
+2) what is a database
+3) What is the difference between Data and information
+4) Show the list of tables available to you
+5) How to select the data from a table with all columns
+6) How to filter the data in select statement
+7) What is horizontal filtering and vertical filtering
+8) Display the employees who are working in deptno 10
+9) List the employees who are not working in deptno 20
+10) What is the dual table
+11) what are the arithmetic operators
+12) Calculate 10+12, 10-12 using arithmetic operators
+13) Display the employees who salary is greater than 1200
+14) List the employees whose salary is between 1200 and 2000
+15) Find the employees whose name contains AB 
+16) Show the employees who are not working in deptno 10 or 20
+17) Display all the employees who are either manager or Clerk
+18) List the employees who are clerks and working in deptno 30
+19) What is the where clause why do we need it
+20) display the employees who are working in deptno 10 and salary >1200 and clerks
+
+
+Lesson 2:
+ 
+1) What are computed columns
+2) Display empno,ename,sal,commision and total Salary(sal+comm) for each employee
+3) What is an alias and how many types of aliases are available
+4) Rename the column name in result set for the total salary in question number 2
+5) Show all the employees and display the result in a sorting order by ename
+6) What are all the options available for sorting the data
+7) What is concatenation and concatenate "This is a" +" Beautiful world"
+8) What are the set operators
+9) Display all the jobs from deptno 10 and deptno 20 less duplicates
+10) List all the jobs from deptno 10 and 20 using set operator
+11) Show all the jobs which are common to both 10 and 20 deptnos
+12) List the job which is unique to 20th deptno in comparison with deptno 10
+
+Lesson 3:
+
+ 
+1) How to suppress duplicates using distinct clause
+2) Get the ASCII value for "A"
+3) Show the character value associated with ASCII value 65
+4) What is concat function where is it used
+5) Show all the employee names in Initial capital letter
+6) Find the length of below string
+               " This is a test"
+7) Show all the employee names in lower case
+8) Show all the employee names in upper case
+9) PAD the employee names with 20 character on to the left with "*"
+10) PAD the employee names with 20 character on to the right with "*"
+11) Remove the preceding spaces from the below string
+               "  this is test "
+12) Remove the trailing spaces from the above string
+13) Replace "AD" characters with "XY" from employee names
+14) What is a function ?
+
+Lesson 4:
+
+
+1) How to find absolute value of any value
+2) What does the CEIL function do
+3) How round up the decimal value to lowest integer
+4) How to find reminder value after  a is divided by b
+5) Show the syntax 3 raised to the power of 5
+6) How to roundup the decimal value to nearest 2 decimal places from 13.5678
+7) What are the aggregate functions
+8) Show the highest salary from EMP table
+9) Display the lowest salary from ENP table
+10) Count the number of records available in emp table
+11) Display today's date
+12) Add 2 months to current date
+13) Find the last day of current month
+14) Find the difference between 2 dates from the below in days
+               12/03/2012 and 02/28/2013
+15) Convert the below string to date format using "MM/DD/YYYY" format
+16) Display to date as "monday   -march    -twenty thirteen"
+17) Display the employees who are not receiving any commission
+18) What does the NVL functions do
+19) What are the special functions and their purpose
+20) What is a NULL
+
+
+Lesson 5:
+
+
+1) What is a sub query
+2) Show the employee who is drawing highest salary
+3) Display the Total salary for each department with department name along with result
+4) Show the department and total salary only if the department total salary is greater than 5000
+5) What are joins why do we need them
+6) How many types of joins are available
+7) Display deptno,dname,loc,empno,ename from emp and dept tables if the parent has child records associated with it(Equi join)
+8) What is a Cartesian join and write a query using the above column names to produce Cartesian(Non-Equi join) product
+9) What is an outer join and how many types of outer joins are available
+10) Display deptno,dname,loc,empno,ename from emp and dept tables even if the parent hasn't child records associated with it(Outer join)
+11) Show who reports to who from emp table(Self join)
+
+Lesson 6: 
+
+
+1) what is a table
+2) Create a student table with below columns, use appropriate data types
+               a)Sno
+               b)Sname
+               c)Class
+3) Alter the above table add Fee column with appropriate data type
+4) Add Remarks column with varchar2(30) to the above table
+5) How do you enter data into a table
+6) What is an unconditional insert and conditional insert
+7) Insert a record in the above table with all columns
+8) Insert data into above table only with sno and sname columns
+9) Update class column value with MS 
+10) Update class column for Sno 1 only
+11) Shrink the size of Sname column to 3 characters
+12) Increase the column size of Remarks to 100 characters
+13) Change the data type of class column to numeric
+14) drop Remarks column from the table
+15) How do you remove record from a table
+16) What is a conditional delete and unconditional delete
+17) Delta record from the above table with SNO=1
+18) Delete all records from student table
+19) What does the truncate command do
+20) what is the difference between truncate and delete command
+
+
+Lesson7:
+
+
+1) What are constraints and why do we need them
+2) List the available constraints and list each of the constraints purpose
+3) What does the null constraint do
+4) What is the effect of not null constraint
+5) What is a unique constraint
+6) What is a primary key
+7) What does the check constraint do
+8) what is the default constraint
+9) What is the purpose of foreign key and how do we implement a foreign key
+10) Create a tables with below columns and use appropriate constraints for quality of data
+               Class Table:
+                              a)Cno
+                              b)Cname
+                              c)Fee
+               Student Table:
+                              a)Sno
+                              b)Sname
+                              c)Gender
+                              d)join_date
+                              e)cno
+11) How do you create a parent child relationship
+12) Create a parent child relationship for the above tables
+13) What are column level constraints and table level constraints
+14) Create below table and show how to add column level constraint with constraint name
+               Create table Constraint_rama(use your name in second part)
+               (sno number(3),
+               sname varchar2(20),
+               class char(3))
+15) Add table level constraints by re-creating the above table.
+16) Drop the above table and recreate it, after recreating it alter the table to add constraints.
+               add Primary key to sno, unique key to sname and check constraint to Class
+17) Disable the primary key using alter command
+18) Add below records
+               a) 1,'sam',30
+               b) 1,'sam',30
+19) Now enable the primary of the table(it will fail)
+20) Delete first record from the above table
+21) try enabling the primary key again
+22) Which catalog view is used to find out the constraint name, constraint type and table name.
+23) Write a query to find out constraint name, constraint type, table name and column name.
+
+
+Lesson8:
+
+
+1) Create user
+2) What role and permissions are required for an user to create table
+3) What is an privilege grant a privilege to user
+4) Revoke above granted privilege from user
+5) How many levels of security is available in oracle
+6) Create user Rama with password rama
+7) grant select permissions on emp to rama
+8) grant delete permissions on emp to rama
+9) revoke delete permissions from rama on emp
+10) What is an role
+11) create a role named Clerk
+12) grant select on dept, all on emp to clerk role
+13) grant access to clerk role to rama
+14) Revoke clerk role from rama
+15) Create an Header in the center and skip an row after that and display the values for below query
+               select empno,ename,sal,comm,totalsalray(sal+comm),deptno from emp
+15) Modify the above query to display the value of deptno only once and suppress next occurrence
+16) display the sub totals of salary for each dept and full result set from the emp table
+17) How to change the SQL prompt
+18) how to display current time along the SQL prompt
+19) Display salary value in $12,000.00 format
+20) How to find the currently logged in user name
+
+Lesson 9:
+
+1) what is a constant, how do we use in a T_SQL program
+2) What is variable
+3) show different ways of assigning values to variable
+4) Display the value of variable using all available methods
+5)what is array and how do we create arrays in T-SQL
+6) Create table variable, insert,update and delete the data from table variable
+7) create temp table insert,update and delete the data from table variable
+8) what is the difference between table variable and temp table
+9)write a program with a variable and assing value 10 to it,
+compare the variable values if it is ten then it should display " I am 10 now",
+if it is not equals to 10 then program should move to else block.
+10)when do we use GOTO statement, write a program utilizing GOTO.
+11)write a program which will wait for 10 seconds before executing the next step.
+12)Display the department name with empno,ename,deptno using CASE expression.
+13)Write a program to disply values from 1 to 20
+14)Write a program to to display 2 table in below format
+	1 * 2 = 2
+	2 * 2= 4
+15) create a program which displays 2 to 20th tables.
