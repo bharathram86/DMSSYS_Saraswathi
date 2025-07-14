@@ -1,0 +1,294 @@
+SQL Server Hands-On Exercises
+
+We’ll use the same employees table from before. If you haven’t already created it, here's the setup:
+🛠 Step 1: Table Setup
+
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    department VARCHAR(30),
+    salary DECIMAL(10, 2),
+    hire_date DATE,
+    manager_id INT
+);
+
+INSERT INTO employees VALUES (101, 'Alice', 'HR', 50000, '2019-03-15', NULL);
+INSERT INTO employees VALUES (102, 'Bob', 'Finance', 60000, '2020-06-01', 101);
+INSERT INTO employees VALUES (103, 'Charlie', 'IT', 70000, '2021-01-12', 101);
+INSERT INTO employees VALUES (104, 'Diana', 'IT', 72000, '2022-05-30', 103);
+INSERT INTO employees VALUES (105, 'Evan', NULL, NULL, NULL, NULL);
+
+
+### SECTION 1: SELECT + WHERE ###
+1. View all employees:
+
+SELECT * FROM employees;
+
+2. View employees in IT department:
+
+SELECT emp_name, department
+FROM employees
+WHERE department = 'IT';
+
+### SECTION 2: ARITHMETIC OPERATORS '+' ###
+
+3.Generate a display string like: using '+'
+Alice (HR) earns $50000 and joined in March 2019
+
+SELECT emp_name + ' (' + ISNULL(department, 'No Dept') + ') earns $' +
+       CAST(salary AS VARCHAR) + ' and joined in ' +
+       FORMAT(hire_date, 'MMMM yyyy') AS employee_summary
+FROM employees
+WHERE hire_date IS NOT NULL AND salary IS NOT NULL;
+
+4.Calculate Salary After Annual Deduction
+
+Use subtraction (-) to simulate tax or PF deduction.
+
+SELECT emp_name,
+       salary,
+       salary - 5000 AS net_salary_after_deduction
+FROM employees
+WHERE salary IS NOT NULL;
+
+5.Calculate Salary Distribution: % Increments
+
+Use division (/) and multiplication (*) to get percent increase over a base.
+
+SELECT emp_name,
+       salary,
+       (salary / 50000.0) * 100 AS percentage_of_base
+FROM employees
+WHERE salary IS NOT NULL;
+
+6. Show employees whose salary is not a multiple of 1000
+
+Use modulo (%) to find remainders.
+
+SELECT emp_name, salary
+FROM employees
+WHERE salary % 1000 <> 0;
+
+### SECTION 3 COMPARISON OPERATORS ###
+
+7. Show employees in IT department:
+
+SELECT emp_name, department
+FROM employees
+WHERE department = 'IT';
+
+7b. Top Earners by Department
+
+Task: For each department, show the name of the employee(s) who earns the highest salary.
+
+SELECT e.emp_name, e.salary, d.dept_name
+FROM employees e
+JOIN departments d ON e.dept_id = d.dept_id
+WHERE e.salary = (
+    SELECT MAX(salary)
+    FROM employees
+    WHERE dept_id = e.dept_id
+);
+
+8. Employees Earning Above Company Average
+
+Task: List employees whose salary is above the company-wide average.
+
+SELECT emp_name, salary
+FROM employees
+WHERE salary > (
+    SELECT AVG(salary) FROM employees WHERE salary IS NOT NULL
+);
+
+9. Show employees whose salary is not a multiple of 1000
+
+Use modulo (%) to find remainders.
+
+SELECT emp_name, salary
+FROM employees
+WHERE salary % 1000 <> 0;
+
+10. Departments With Below-Average Salary Cost
+
+Task: Show departments where the total salary payout is below the average salary payout across all departments.
+
+SELECT d.dept_name, SUM(e.salary) AS dept_total_salary
+FROM employees e
+JOIN departments d ON e.dept_id = d.dept_id
+GROUP BY d.dept_name
+HAVING SUM(e.salary) < (
+    SELECT AVG(total)
+    FROM (
+        SELECT SUM(salary) AS total
+        FROM employees
+        WHERE salary IS NOT NULL
+        GROUP BY dept_id
+    ) AS dept_sums
+);
+
+11. Department-wise Employee Count & Salary Cost
+
+Task: Show the total number of employees and total salary per department. Include only departments with at least 2 employees.
+
+SELECT d.dept_name,
+       COUNT(e.emp_id) AS total_employees,
+       SUM(e.salary) AS total_salary
+FROM employees e
+INNER JOIN departments d ON e.dept_id = d.dept_id
+GROUP BY d.dept_name
+HAVING COUNT(e.emp_id) >= 2;
+
+### SECTION 4 LOGICAL OPERATORS ###
+
+Operator	Description
+AND	All conditions must be true
+OR	At least one condition must be true
+NOT	Reverses the condition
+    
+12. Find employees in IT and with salary above 60K
+
+Uses AND to apply both conditions.
+
+SELECT emp_name, department, salary
+FROM employees
+WHERE department = 'IT' AND salary > 60000;
+
+13. List employees in either HR or Finance department
+
+Uses OR to match one of two departments.
+
+SELECT emp_name, department
+FROM employees
+WHERE department = 'HR' OR department = 'Finance';
+
+14. Identify employees not assigned to a department
+
+Use NOT with IS NULL (or with IN/LIKE).
+
+SELECT emp_name
+FROM employees
+WHERE department IS NULL;
+-- or
+SELECT emp_name
+FROM employees
+WHERE NOT department IS NOT NULL;
+    
+15. Employees with salary not between 50K and 70K
+
+Uses NOT with BETWEEN.
+
+SELECT emp_name, salary
+FROM employees
+WHERE NOT (salary BETWEEN 50000 AND 70000);
+
+16. Active employees in IT or HR but salary above 60K
+
+Combines OR and AND with parentheses.
+
+SELECT emp_name, department, salary
+FROM employees
+WHERE (department = 'IT' OR department = 'HR')
+  AND salary > 60000;
+  
+17. Retired employees not from IT or Finance
+
+Use NOT IN to exclude departments.
+
+SELECT emp_name, department
+FROM retired_employees
+WHERE department NOT IN ('IT', 'Finance');
+
+18. Employees either missing department or salary
+
+This is useful for data quality checks.
+
+SELECT emp_name
+FROM employees
+WHERE department IS NULL OR salary IS NULL;
+
+19.Employees in Finance and hired before 2021
+
+    Great for historical team filtering.
+
+SELECT emp_name, hire_date
+FROM employees
+WHERE department = 'Finance' AND hire_date < '2021-01-01';
+
+Use Case				Logical Operator Used
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~	~~~~~~~~~~~~~~~~~~~~~		
+Filter multiple strict conditions	AND
+Match any of multiple values		OR
+Exclude specific matches		NOT, NOT IN, NOT LIKE
+Data cleansing and audits		OR, IS NULL, NOT NULL
+
+
+### SECTION 5 SPECIAL OPERATORS ###
+
+20. BETWEEN
+
+Usage: Used to filter values within a specific range (inclusive).
+Real-time Example: Employees earning between 55,000 and 70,000
+
+SELECT emp_name, salary
+FROM employees
+WHERE salary BETWEEN 55000 AND 70000;
+
+21. LIKE
+
+Usage: Used to filter based on a pattern (wildcards: % = multiple chars, _ = one char)
+Example 1: Names starting with 'A'
+
+SELECT emp_name
+FROM employees
+WHERE emp_name LIKE 'A%';
+
+Example 2: Names containing 'an'
+
+SELECT emp_name
+FROM employees
+WHERE emp_name LIKE '%an%';
+
+22. IN
+
+Usage: Shorthand for multiple OR conditions
+Real-time Example: Employees in HR, IT, or Finance
+
+SELECT emp_name, department
+FROM employees
+WHERE department IN ('HR', 'IT', 'Finance');
+
+23. IS NULL
+
+Usage: Checks if a column has no value
+Example 1: Employees missing salary info
+
+SELECT emp_name
+FROM employees
+WHERE salary IS NULL;
+
+Example 2: Employees missing department
+
+SELECT emp_name
+FROM employees
+WHERE department IS NULL;
+
+24. EXISTS
+
+Usage: Tests for the existence of rows returned by a subquery.
+Example 1: Show departments that have at least one employee
+
+SELECT dept_name
+FROM departments d
+WHERE EXISTS (
+    SELECT 1 FROM employees e WHERE e.dept_id = d.dept_id
+);
+
+Example 2: Show employees who are also in retired_employees table
+
+SELECT emp_name
+FROM employees e
+WHERE EXISTS (
+    SELECT 1 FROM retired_employees r WHERE r.emp_id = e.emp_id
+);
+
+
