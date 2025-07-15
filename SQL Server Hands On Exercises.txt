@@ -292,3 +292,215 @@ WHERE EXISTS (
 );
 
 
+Summary Table
+~~~~~~~~~~~~~~
+Operator	Purpose					Example
+~~~~~~~~~	~~~~~~~~					~~~~~~~~~
+BETWEEN		Range filtering				salary BETWEEN 55000 AND 70000
+LIKE		Pattern matching			emp_name LIKE 'A%'
+IN		Matches multiple values			department IN ('IT', 'HR')
+IS NULL		Check for missing values		salary IS NULL
+UNIQUE		Enforce uniqueness in columns		Used in CREATE TABLE
+EXISTS		Check subquery for row existence	WHERE EXISTS (...)
+
+### SECTION 6 SET OPERATORS ###
+
+25. UNION
+
+UNION: Merge active & retired employee names (no duplicates)
+
+SELECT emp_name FROM employees
+UNION
+SELECT emp_name FROM retired_employees;
+
+26. UNION ALL
+
+UNION ALL: List all employee names including duplicates
+
+SELECT emp_name FROM employees
+UNION ALL
+SELECT emp_name FROM retired_employees;
+
+27. INTERSECT: Show employees who exist in both active and retired tables (rehired?)
+
+INTERSECT: Show employees who exist in both active and retired tables (rehired?)
+
+28. MINUS 
+
+EXCEPT: Active employees who have never been retired
+
+SELECT emp_id FROM employees
+EXCEPT
+SELECT emp_id FROM retired_employees;
+
+EXCEPT: Retired employees who were never in the active table
+
+SELECT emp_id FROM retired_employees
+EXCEPT
+SELECT emp_id FROM employees;
+
+Use Case					Operator	Description
+~~~~~~~~~~~~~~~					~~~~~~~~~	~~~~~~~~~~~~
+Merge all current and former employees		UNION		Reporting or messaging
+Count employees including repeat hires		UNION ALL	Keep duplicates
+Find rehired employees				INTERSECT	In both employees and retired_employees
+Get active employees who were never retired	EXCEPT		SQL Server’s MINUS
+Validate data sync across systems		All		Compare user tables across databases
+
+### SECTION 7 STRING CONCATENATION ###
+
+Basic Syntax
+
+SELECT column1 + column2 AS result
+FROM table;
+
+Note:If any value is NULL, the result becomes NULL unless you handle it using ISNULL() or COALESCE().
+
+29. Create a descriptive sentence for each employee
+
+SELECT emp_name + ' works in ' + department + ' department.' AS employee_summary
+FROM employees
+WHERE department IS NOT NULL;
+
+30. Concatenate salary with a currency label
+
+SELECT emp_name, 'Salary: $' + CAST(salary AS VARCHAR) AS salary_info
+FROM employees
+WHERE salary IS NOT NULL;
+
+31. Include hire date in a sentence (use FORMAT)
+
+SELECT emp_name + ' joined on ' + FORMAT(hire_date, 'MMMM dd, yyyy') AS join_info
+FROM employees
+WHERE hire_date IS NOT NULL;
+
+32. Handle NULL values with ISNULL()
+
+SELECT emp_name + ' is in ' + ISNULL(department, 'No Department Assigned') AS info
+FROM employees;
+
+33. Create email ID from name and domain
+
+Assuming your organization uses emails like firstname@company.com:
+
+SELECT LOWER(emp_name) + '@company.com' AS email_address
+FROM employees;
+
+Note: You can use REPLACE() or SUBSTRING() to extract first names if needed.
+
+Option 1: Using SUBSTRING + CHARINDEX
+
+Extract first word before the space
+
+SELECT 
+    LOWER(SUBSTRING(emp_name, 1, 
+        CASE 
+            WHEN CHARINDEX(' ', emp_name) > 0 
+            THEN CHARINDEX(' ', emp_name) - 1 
+            ELSE LEN(emp_name) 
+        END
+    )) + '@company.com' AS email_address
+FROM employees;
+
+	Explaination:
+	Finds the position of the first space using CHARINDEX.
+
+	Uses SUBSTRING to extract from position 1 up to the first space.
+
+	Handles single-name users like Bob too.
+	
+Option 2: Use REPLACE() if name has unwanted characters (e.g., dots or numbers)
+
+SELECT 
+    LOWER(REPLACE(emp_name, ' ', '')) + '@company.com' AS cleaned_email
+FROM employees;
+
+Option 3: Combine First Initial + Last Name (like jdoe@company.com)
+
+This is useful if you want standard corporate format.
+
+SELECT 
+    LOWER(
+        LEFT(emp_name, 1) + 
+        SUBSTRING(emp_name, CHARINDEX(' ', emp_name) + 1, LEN(emp_name))
+    ) + '@company.com' AS corp_email
+FROM employees
+WHERE CHARINDEX(' ', emp_name) > 0;
+
+
+34. Full employee summary (name + department + salary)
+
+SELECT emp_name + ' | ' + ISNULL(department, 'N/A') + ' | $' + CAST(ISNULL(salary, 0) AS VARCHAR) AS full_summary
+FROM employees;
+
+35. Show employee name + department location from joined tables:
+
+SELECT e.emp_name + ' works in ' + d.dept_name + ' (' + d.location + ')' AS detailed_info
+FROM employees e
+JOIN departments d ON e.dept_id = d.dept_id;
+
+### SECTION 8 DISTINCT CLAUSES ###
+
+36. List unique departments
+
+SELECT DISTINCT department
+FROM employees;
+
+37. Get unique job titles (if you have a job_title column)
+
+SELECT DISTINCT job_title
+FROM employees;
+
+38. Unique combinations of department and job title
+
+SELECT DISTINCT department, job_title
+FROM employees;
+
+39. Distinct locations from joined department data
+
+SELECT DISTINCT d.location
+FROM employees e
+JOIN departments d ON e.dept_id = d.dept_id;
+
+40. All unique salary values
+
+SELECT DISTINCT salary
+FROM employees;
+
+41. Employees who changed departments (from both tables)
+
+SELECT DISTINCT emp_id, department
+FROM (
+    SELECT emp_id, department FROM employees
+    UNION ALL
+    SELECT emp_id, department FROM retired_employees
+) AS combined_depts;
+
+Key NOTE:
+~~~~~~~~
+How many columns can be set in DISTINCT from a table. 
+
+In SQL Server, there is no fixed limit on how many columns you can use with the DISTINCT clause as long as:
+The key rule is:
+
+    All selected columns must appear in the SELECT list — and DISTINCT will consider the entire combination of all those columns for uniqueness.
+    
+Example: Multi-column DISTINCT
+
+SELECT DISTINCT emp_id, emp_name, department, salary
+FROM employees;
+
+This query returns only rows with unique combinations of all four columns.
+Even if emp_id is unique, if you include other columns (like salary), rows might be considered duplicates or not depending on the full row.
+
+SQL Server Limits (FYI)
+
+While SQL Server does not limit DISTINCT by column count directly, practical limits exist:
+
+Factor				Limit
+~~~~~~~				~~~~~~
+Max columns per SELECT		4096 columns (SQL Server 2022 and later)
+Max row size			~8,060 bytes (excluding VARCHAR(MAX), TEXT, etc.)
+Max index key columns		32
+
+So yes, you can have hundreds of columns in a DISTINCT query as long as the total row size is within SQL Server's limit.
